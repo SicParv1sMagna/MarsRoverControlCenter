@@ -22,8 +22,6 @@ public class RoverStartOperationResponseDto {
     private Long id;
 
     private String name;
-    private Double speed;
-    private Double maneuverability;
     private LocalDateTime sendToOperationDate;
     private RoverStatus roverStatus;
 
@@ -31,9 +29,7 @@ public class RoverStartOperationResponseDto {
         return RoverStartOperationResponseDto.builder()
                 .id(rover.getId())
                 .name(rover.getName())
-                .speed(rover.getSpeed())
                 .sendToOperationDate(rover.getSendToOperationDate())
-                .maneuverability(rover.getManeuverability())
                 .roverStatus(rover.getRoverStatus())
                 .build();
     }

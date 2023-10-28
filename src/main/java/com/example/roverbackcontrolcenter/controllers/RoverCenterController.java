@@ -26,6 +26,10 @@ import java.net.URI;
 public class RoverCenterController {
     private final RoverService roverService;
 
+    /**
+     * @param request {@link RoverCreateRequestDto}
+     * @return {@link RoverCreateResponseDto}
+     */
     @PostMapping("/")
     private ResponseEntity<RoverCreateResponseDto> createRover(@RequestBody @Valid RoverCreateRequestDto request) {
         Rover rover = roverService.createRover(request);
@@ -34,8 +38,12 @@ public class RoverCenterController {
                 .body(RoverCreateResponseDto.mapFromEntity(rover));
     }
 
+    /**
+     * @param id Long
+     * @return {@link RoverStartOperationResponseDto}
+     */
     @PostMapping("/{id}/startOperation")
-    private ResponseEntity<?> startRoverOperation(
+    private ResponseEntity<RoverStartOperationResponseDto> startRoverOperation(
             @PathVariable(name = "id") @Min(value = 1L, message = "Id cant be less than 1") Long id) {
         Rover rover = roverService.startRoverOperation(id);
         return ResponseEntity
