@@ -4,6 +4,7 @@ import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequest
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverCreateResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperationResponseDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
+import com.example.roverbackcontrolcenter.netty.NettyClientService;
 import com.example.roverbackcontrolcenter.services.RoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,14 @@ import java.net.URI;
 @RequestMapping("/rover")
 public class RoverCenterController {
     private final RoverService roverService;
+    private final NettyClientService nettyClientService;
 
     /**
      * @param request {@link RoverCreateRequestDto}
      * @return {@link RoverCreateResponseDto}
      */
     @PostMapping("/")
-    private ResponseEntity<RoverCreateResponseDto> createRover(@RequestBody @Valid RoverCreateRequestDto request) {
+    public ResponseEntity<RoverCreateResponseDto> createRover(@RequestBody @Valid RoverCreateRequestDto request) {
         Rover rover = roverService.createRover(request);
         return ResponseEntity
                 .created(URI.create("/api/rover/" + rover.getId()))
@@ -43,7 +45,7 @@ public class RoverCenterController {
      * @return {@link RoverStartOperationResponseDto}
      */
     @PostMapping("/{id}/startOperation")
-    private ResponseEntity<RoverStartOperationResponseDto> startRoverOperation(
+    public ResponseEntity<RoverStartOperationResponseDto> startRoverOperation(
             @PathVariable(name = "id") @Min(value = 1L, message = "Id cant be less than 1") Long id) {
         Rover rover = roverService.startRoverOperation(id);
         return ResponseEntity
