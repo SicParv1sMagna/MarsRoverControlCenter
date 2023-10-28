@@ -1,6 +1,7 @@
 package com.example.roverbackcontrolcenter.netty;
 
 import com.example.roverbackcontrolcenter.netty.models.RoverInfoConnect;
+import com.example.roverbackcontrolcenter.netty.models.RoverSentInfo;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -38,6 +39,8 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof RoverInfoConnect roverInfo) {
             activeChannelManager.addChannel(roverInfo.getRoverId(), ctx.channel());
             log.warn("Подключен новый Rover с id: " + roverInfo.getRoverId());
+        } else if (msg instanceof RoverSentInfo roverSentInfo) {
+
         }
     }
 

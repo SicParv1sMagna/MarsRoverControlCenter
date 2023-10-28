@@ -1,6 +1,7 @@
 package com.example.roverbackcontrolcenter.controllers;
 
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequestDto;
+import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperationRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverCreateResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperationResponseDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
@@ -44,8 +45,9 @@ public class RoverCenterController {
      */
     @PostMapping("/{id}/startOperation")
     private ResponseEntity<RoverStartOperationResponseDto> startRoverOperation(
-            @PathVariable(name = "id") @Min(value = 1L, message = "Id cant be less than 1") Long id) {
-        Rover rover = roverService.startRoverOperation(id);
+            @PathVariable(name = "id") @Min(value = 1L, message = "Id cant be less than 1") Long id,
+            @RequestBody @Valid RoverStartOperationRequestDto request) {
+        Rover rover = roverService.startRoverOperation(id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(RoverStartOperationResponseDto.mapFromEntity(rover));
