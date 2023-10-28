@@ -1,13 +1,13 @@
-package com.example.marsohodbackcontrolcenter;
+package com.example.roverbackcontrolcenter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MarsohodBackControlCenterApplication {
+public class RoverBackControlCenterApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MarsohodBackControlCenterApplication.class, args);
+        SpringApplication.run(RoverBackControlCenterApplication.class, args);
     }
 
 }

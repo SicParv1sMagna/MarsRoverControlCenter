@@ -1,10 +1,10 @@
-package com.example.marsohodbackcontrolcenter;
+package com.example.roverbackcontrolcenter;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MarsohodBackControlCenterApplicationTests {
+class RoverBackControlCenterApplicationTests {
 
     @Test
     void contextLoads() {
