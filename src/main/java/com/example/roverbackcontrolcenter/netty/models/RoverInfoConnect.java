@@ -1,9 +1,11 @@
-package com.example.roverbackcontrolcenter.netty;
+package com.example.roverbackcontrolcenter.netty.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * Description: DTO of rover info
@@ -14,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoverInfo {
+public class RoverInfoConnect implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Long roverId;
 }
