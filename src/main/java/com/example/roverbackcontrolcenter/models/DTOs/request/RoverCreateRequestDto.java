@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * Description:
  *
@@ -17,9 +19,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoverCreateRequestDto {
-
+    @NotBlank(message = "Field name cant be blank")
     private String name;
+    @NotBlank(message = "Field speed cant be blank")
     private Double speed;
+    @NotBlank(message = "Field maneuverability cant be blank")
     private Double maneuverability;
 
     public Rover mapToEntity() {

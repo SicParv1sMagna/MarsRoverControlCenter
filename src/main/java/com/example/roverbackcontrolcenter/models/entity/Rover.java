@@ -31,6 +31,8 @@ public class Rover {
     @Basic
     private LocalDateTime startOperationDate;
     @Basic
+    private LocalDateTime sendToOperationDate;
+    @Basic
     private LocalDateTime endOperationDate;
     private Double speed;
     private Double maneuverability;

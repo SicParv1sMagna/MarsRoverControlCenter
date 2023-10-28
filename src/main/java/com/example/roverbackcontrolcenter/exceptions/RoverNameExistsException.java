@@ -3,7 +3,7 @@ package com.example.roverbackcontrolcenter.exceptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Description:
+ * Description: Exception if rover name already exists
  *
  * @author Vladimir Krasnov
  */

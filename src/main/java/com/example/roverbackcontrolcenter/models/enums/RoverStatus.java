@@ -7,6 +7,7 @@ package com.example.roverbackcontrolcenter.models.enums;
  */
 public enum RoverStatus {
     FREE,
+    SENT,
     IN_OPERATION,
     DECOMMISSIONED
 }
