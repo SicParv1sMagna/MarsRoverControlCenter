@@ -2,12 +2,15 @@ package com.example.roverbackcontrolcenter.services.Impl;
 
 import com.example.roverbackcontrolcenter.exceptions.RoverAlreadyOnOperationException;
 import com.example.roverbackcontrolcenter.exceptions.RoverByIdNotFoundException;
+import com.example.roverbackcontrolcenter.exceptions.RoverDisconnectedException;
 import com.example.roverbackcontrolcenter.exceptions.RoverNameExistsException;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperationRequestDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
+import com.example.roverbackcontrolcenter.models.entity.RoverCommand;
 import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.netty.ActiveChannelManager;
+import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
 import com.example.roverbackcontrolcenter.netty.models.RoverStartSending;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import com.example.roverbackcontrolcenter.services.RoverService;
@@ -37,6 +40,21 @@ public class RoverServiceImpl implements RoverService {
         } catch (DataIntegrityViolationException ex) {
             throw new RoverNameExistsException(request.getName());
         }
+    }
+
+    @Override
+    public RoverAddCommand addCommand(RoverCommand roverCommand) {
+        RoverAddCommand roverAddCommand = new RoverAddCommand();
+        roverAddCommand.setRoverId(roverCommand.getRoverId());
+        roverAddCommand.setCommand(roverCommand.getCommand());
+        roverAddCommand.setX(roverCommand.getX());
+        roverAddCommand.setY(roverCommand.getY());
+        roverAddCommand.setCommandStatus(roverCommand.getCommandStatus());
+        roverAddCommand.setPlanTime(roverCommand.getPlanTime());
+        boolean canSent = activeChannelManager.sendMessageToChannel(roverCommand.getRoverId(), roverAddCommand);
+        if (canSent) {
+            return roverAddCommand;
+        } else throw new RoverDisconnectedException(roverCommand.getRoverId());
     }
 
     @Override

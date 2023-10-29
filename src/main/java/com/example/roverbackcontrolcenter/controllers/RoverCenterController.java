@@ -1,11 +1,15 @@
 package com.example.roverbackcontrolcenter.controllers;
 
+import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCommandRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperationRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverCreateResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverGetAllResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperationResponseDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
+import com.example.roverbackcontrolcenter.models.entity.RoverCommand;
+import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
+import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import com.example.roverbackcontrolcenter.services.RoverService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +37,7 @@ import java.util.List;
 public class RoverCenterController {
     private final RoverService roverService;
     private final RoverRepo roverRepo;
+    private final RoverCommandRepo roverCommandRepo;
 
     /**
      * @param request {@link RoverCreateRequestDto}
@@ -67,6 +72,18 @@ public class RoverCenterController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(roverList.stream().map(RoverGetAllResponseDto::mapFromEntity).toList());
+    }
+
+    @PostMapping("/{id}/commands")
+    private ResponseEntity<?> addCommand(@PathVariable(name = "id") Long id,
+                                         @RequestBody RoverCommandRequestDto req) {
+        RoverCommand roverCommand = req.mapToEntity();
+        roverCommand.setRoverId(id);
+        roverCommandRepo.save(roverCommand);
+        RoverAddCommand res = roverService.addCommand(roverCommand);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(res);
     }
 
     private final SimpMessagingTemplate simp;
