@@ -9,6 +9,7 @@ import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperati
 import com.example.roverbackcontrolcenter.models.entity.Rover;
 import com.example.roverbackcontrolcenter.models.entity.RoverCommand;
 import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
+import com.example.roverbackcontrolcenter.repos.MovementRepo;
 import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import com.example.roverbackcontrolcenter.services.RoverService;
@@ -38,6 +39,7 @@ public class RoverCenterController {
     private final RoverService roverService;
     private final RoverRepo roverRepo;
     private final RoverCommandRepo roverCommandRepo;
+    private final MovementRepo movementRepo;
 
     /**
      * @param request {@link RoverCreateRequestDto}
@@ -83,6 +85,13 @@ public class RoverCenterController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(res);
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<?> getHistoryById(@PathVariable(name = "id") Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(movementRepo.findAllByRoverId(id));
     }
 
 

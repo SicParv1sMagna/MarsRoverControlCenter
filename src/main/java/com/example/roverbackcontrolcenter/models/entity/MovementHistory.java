@@ -29,5 +29,6 @@ public class MovementHistory {
     private LocalDateTime timestamp;
     private Double x;
     private Double y;
+    @Enumerated(EnumType.STRING)
     private MovementStatus movementStatus;
 }
