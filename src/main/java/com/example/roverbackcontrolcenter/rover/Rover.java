@@ -65,6 +65,7 @@ public class Rover {
         roverAddCommand.setPlanTime(LocalDateTime.now());
 
         RoverCommand roverCommand = new RoverCommand();
+        roverCommand.setRoverId(roverId);
         roverCommand.setCommand(roverAddCommand.getCommand());
         roverCommand.setX(roverAddCommand.getX());
         roverCommand.setY(roverAddCommand.getY());
@@ -80,6 +81,7 @@ public class Rover {
         moveFun(x, y);
         Coordinate coordinate = cordRepo.findCoordinateByXAndY((int) Math.round(xCord), (int) Math.round(yCord));
         activeChannelContainer.getActiveChannel().writeAndFlush(CoordinateDto.mapFromEntity(coordinate, roverId));
+        log.warn("Collect done with result "+ CoordinateDto.mapFromEntity(coordinate, roverId).toString());
         status = RoverSchedulerStatus.FREE;
     }
 

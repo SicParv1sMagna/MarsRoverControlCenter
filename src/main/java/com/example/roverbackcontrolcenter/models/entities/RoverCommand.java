@@ -24,6 +24,8 @@ public class RoverCommand {
     @Column(name = "id")
     private Long id;
 
+    private Long roverId;
+
     @Enumerated(EnumType.STRING)
     private RoverCommandEnum command;
 

@@ -13,5 +13,5 @@ import java.util.Optional;
  * @author Vladimir Krasnov
  */
 public interface RoverCommandRepo extends JpaRepository<RoverCommand, Long> {
-    RoverCommand findFirstByCommandStatus(CommandStatus status);
+    RoverCommand findFirstByCommandStatusAndRoverId(CommandStatus status, Long roverId);
 }

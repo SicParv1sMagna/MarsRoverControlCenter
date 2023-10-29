@@ -42,7 +42,7 @@ public class NettyClientService {
     @SneakyThrows
     public void connectToServer() {
         RoverInfoConnect roverInfo = new RoverInfoConnect();
-        roverInfo.setRoverId(1L);
+        roverInfo.setRoverId(roverId);
 
         RoverConnectTCPDto res = new RoverConnectTCPDto();
         res.setConnectStatus(ConnectStatus.FAILURE);

@@ -27,7 +27,7 @@ public class RoverScheduler {
     @Scheduled(fixedRate = 3000) // Запуск каждые 3 секунды
     public void scheduledTask() {
         if(rover.getStatus().equals(RoverSchedulerStatus.FREE)){
-            RoverCommand command = roverCommandRepo.findFirstByCommandStatus(CommandStatus.IN_PLAN);
+            RoverCommand command = roverCommandRepo.findFirstByCommandStatusAndRoverId(CommandStatus.IN_PLAN, rover.getRoverId());
             if(command != null){
                 switch (command.getCommand()){
                     case MOVE -> {

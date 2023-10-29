@@ -4,7 +4,7 @@ rover:
   speed: 2
   maneuverability: 0.9
 server:
-  port: 8083
+  port: 8084
   servlet:
     context-path: /api
 spring:
