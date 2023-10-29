@@ -12,6 +12,7 @@ import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.netty.ActiveChannelManager;
 import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
 import com.example.roverbackcontrolcenter.netty.models.RoverStartSending;
+import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import com.example.roverbackcontrolcenter.services.RoverService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class RoverServiceImpl implements RoverService {
 
     private final RoverRepo roverRepo;
     private final ActiveChannelManager activeChannelManager;
+    private final RoverCommandRepo roverCommandRepo;
 
     @Override
     public Rover createRover(RoverCreateRequestDto request) {
@@ -54,7 +56,10 @@ public class RoverServiceImpl implements RoverService {
         boolean canSent = activeChannelManager.sendMessageToChannel(roverCommand.getRoverId(), roverAddCommand);
         if (canSent) {
             return roverAddCommand;
-        } else throw new RoverDisconnectedException(roverCommand.getRoverId());
+        } else {
+            roverCommandRepo.save(roverCommand);
+            throw new RoverDisconnectedException(roverCommand.getRoverId());
+        }
     }
 
     @Override

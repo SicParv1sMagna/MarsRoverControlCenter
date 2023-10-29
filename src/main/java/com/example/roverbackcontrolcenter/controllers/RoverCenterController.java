@@ -75,11 +75,10 @@ public class RoverCenterController {
     }
 
     @PostMapping("/{id}/commands")
-    private ResponseEntity<?> addCommand(@PathVariable(name = "id") Long id,
-                                         @RequestBody RoverCommandRequestDto req) {
+    public ResponseEntity<?> addCommand(@PathVariable(name = "id") Long id,
+                                        @RequestBody RoverCommandRequestDto req) {
         RoverCommand roverCommand = req.mapToEntity();
         roverCommand.setRoverId(id);
-        roverCommandRepo.save(roverCommand);
         RoverAddCommand res = roverService.addCommand(roverCommand);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -1,10 +1,13 @@
 package com.example.roverbackcontrolcenter.netty;
 
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverSendStatusSocketDto;
+import com.example.roverbackcontrolcenter.models.entity.MovementHistory;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
 import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
+import com.example.roverbackcontrolcenter.netty.models.MovementHistoryDto;
 import com.example.roverbackcontrolcenter.netty.models.RoverInfoConnect;
 import com.example.roverbackcontrolcenter.netty.models.RoverLandStatus;
+import com.example.roverbackcontrolcenter.repos.MovementRepo;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -28,6 +31,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     private final ActiveChannelManager activeChannelManager;
     private final SimpMessagingTemplate simp;
     private final RoverRepo roverRepo;
+    private final MovementRepo movementRepo;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -43,6 +47,15 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             handleRoverInfoConnect((RoverInfoConnect) msg, ctx.channel());
         } else if (msg instanceof RoverLandStatus) {
             handleRoverLandStatus((RoverLandStatus) msg);
+        } else if (msg instanceof MovementHistoryDto movementHistoryDto) {
+            MovementHistory movementHistory = new MovementHistory();
+            movementHistory.setRoverId(movementHistoryDto.getRoverId());
+            movementHistory.setTimestamp(movementHistoryDto.getTimestamp());
+            movementHistory.setX(movementHistoryDto.getX());
+            movementHistory.setY(movementHistoryDto.getY());
+            movementHistory.setMovementStatus(movementHistoryDto.getMovementStatus());
+            movementRepo.save(movementHistory);
+            simp.convertAndSend("/rover/movementHistory", movementHistory);
         }
     }
 
