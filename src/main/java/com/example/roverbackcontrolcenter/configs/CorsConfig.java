@@ -13,8 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("*") // Указывайте здесь путь, который соответствует вашему API
-                .allowedOrigins("*")
+        registry.addMapping("/api/**") // Указывайте здесь путь, который соответствует вашему API
+                .allowedOrigins("http://localhost:8082")
                 .allowCredentials(true);
     }
 }
