@@ -5,8 +5,12 @@ import com.example.roverbackcontrolcenter.models.enums.CommandStatus;
 import com.example.roverbackcontrolcenter.models.enums.RoverSchedulerStatus;
 import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ScopeMetadata;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 /**
  * Description:
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Component;
  * @author Vladimir Krasnov
  */
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class RoverScheduler {
     private final RoverCommandRepo roverCommandRepo;
@@ -25,7 +30,14 @@ public class RoverScheduler {
             RoverCommand command = roverCommandRepo.findFirstByCommandStatus(CommandStatus.IN_PLAN);
             if(command != null){
                 switch (command.getCommand()){
-                    case MOVE -> rover.move(command.getX(), command.getY());
+                    case MOVE -> {
+                        command.setStartTime(LocalDateTime.now());
+                        rover.move(command.getX(), command.getY());
+                        command.setDoneTime(LocalDateTime.now());
+                        command.setCommandStatus(CommandStatus.DONE);
+                        roverCommandRepo.save(command);
+                        log.warn("Rover достиг место назначения");
+                    }
                 }
             }
         }

@@ -89,6 +89,9 @@ public class Rover {
         double distance = Math.sqrt(Math.pow(x - currentX, 2) + Math.pow(y - currentY, 2));
 
         while (distance > 0) {
+            if(distance <= 2){
+                break;
+            }
 
             // Получение координаты препятствия на маршруте марсохода (на основе текущих координат)
             Coordinate coordinate = cordRepo.findCoordinateByXAndY((int) Math.round(xCord), (int) Math.round(yCord));
@@ -132,7 +135,7 @@ public class Rover {
             }
         }
         status = RoverSchedulerStatus.FREE;
-        RoverInfo roverInfo = roverInfoRepo.findById(roverId).get();
+        RoverInfo roverInfo = roverInfoRepo.findByRoverId(roverId);
         roverInfo.setY(yCord);
         roverInfo.setX(xCord);
         roverInfo.setStatus(status);
