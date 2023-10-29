@@ -34,7 +34,7 @@ public class RoverCenterController {
      * @return {@link RoverCreateResponseDto}
      */
     @PostMapping("/")
-    private ResponseEntity<RoverCreateResponseDto> createRover(@RequestBody @Valid RoverCreateRequestDto request) {
+    public ResponseEntity<RoverCreateResponseDto> createRover(@RequestBody @Valid RoverCreateRequestDto request) {
         Rover rover = roverService.createRover(request);
         return ResponseEntity
                 .created(URI.create("/api/rover/" + rover.getId()))
@@ -46,7 +46,7 @@ public class RoverCenterController {
      * @return {@link RoverStartOperationResponseDto}
      */
     @PostMapping("/{id}/startOperation")
-    private ResponseEntity<RoverStartOperationResponseDto> startRoverOperation(
+    public ResponseEntity<RoverStartOperationResponseDto> startRoverOperation(
             @PathVariable(name = "id") @Min(value = 1L, message = "Id cant be less than 1") Long id,
             @RequestBody @Valid RoverStartOperationRequestDto request) {
         Rover rover = roverService.startRoverOperation(id, request);
