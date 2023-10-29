@@ -9,6 +9,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,42 +27,44 @@ import java.time.LocalDateTime;
 public class NettyClientService {
 
     private final Bootstrap nettyClientBootstrap;
-    private final NettyClientHandler nettyClientHandler;
-    private Channel activeChannel;
+    private final ActiveChannelContainer container;
+
+    @Value("${rover.id}")
+    private Long roverId;
+    @Value("${rover.timeToMars}")
+    private Integer timeToMars;
 
     @PostConstruct
     public void init() {
-        RoverConnectTCPDto roverConnectTCPDto = connectToServer();
-        switch (roverConnectTCPDto.getConnectStatus()){
-            case SUCCESS -> log.warn(roverConnectTCPDto.toString());
-            case FAILURE -> log.error(roverConnectTCPDto.toString());
-        }
+        connectToServer();
     }
 
     @SneakyThrows
-    public RoverConnectTCPDto connectToServer() {
+    public void connectToServer() {
         RoverInfoConnect roverInfo = new RoverInfoConnect();
         roverInfo.setRoverId(1L);
 
         RoverConnectTCPDto res = new RoverConnectTCPDto();
+        res.setConnectStatus(ConnectStatus.FAILURE);
         int attempts = 0;
-        while(attempts < 5) {
+        while(res.getConnectStatus().equals(ConnectStatus.FAILURE)) {
             try {
                 attempts++;
+                log.warn("Попытка установиться связь с сервером " + attempts);
                 Channel channel = nettyClientBootstrap.connect("localhost", 8888).sync().channel();
-                channel.attr(AttributeKey.valueOf("roverInfo")).set(roverInfo);
                 channel.writeAndFlush(roverInfo);
-                setActiveChannel(channel);
+                container.setActiveChannel(channel);
                 res.setConnectStatus(ConnectStatus.SUCCESS);
                 res.setTimestamp(LocalDateTime.now());
                 res.setAttempts(attempts);
-                return res;
+                Thread.sleep(timeToMars);
+                log.warn("Связь установлена");
             } catch (Exception e) {
+                Thread.sleep(timeToMars);
                 res.setAttempts(attempts);
                 res.setConnectStatus(ConnectStatus.FAILURE);
+                log.error("Неудачно");
             }
         }
-        res.setTimestamp(LocalDateTime.now());
-        return res;
     }
 }
