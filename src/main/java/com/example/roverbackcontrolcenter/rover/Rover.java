@@ -1,6 +1,7 @@
 package com.example.roverbackcontrolcenter.rover;
 
 import com.example.roverbackcontrolcenter.models.entities.RoverInfo;
+import com.example.roverbackcontrolcenter.netty.models.CoordinateDto;
 import com.example.roverbackcontrolcenter.netty.models.MovementHistoryDto;
 import com.example.roverbackcontrolcenter.models.entities.Coordinate;
 import com.example.roverbackcontrolcenter.models.entities.MovementHistory;
@@ -74,8 +75,15 @@ public class Rover {
         log.warn("Команда добавлена id " + roverCommand.getId());
     }
 
-    public void move(Double x, Double y){
+    public void collectInfo(Double x, Double y){
         status = RoverSchedulerStatus.IN_PROGRESS;
+        moveFun(x, y);
+        Coordinate coordinate = cordRepo.findCoordinateByXAndY((int) Math.round(xCord), (int) Math.round(yCord));
+        activeChannelContainer.getActiveChannel().writeAndFlush(CoordinateDto.mapFromEntity(coordinate, roverId));
+        status = RoverSchedulerStatus.FREE;
+    }
+
+    public void moveFun(Double x, Double y){
         try {
             Thread.sleep(timeToMars);
         } catch (InterruptedException e) {
@@ -134,11 +142,16 @@ public class Rover {
                 throw new RuntimeException(e);
             }
         }
-        status = RoverSchedulerStatus.FREE;
         RoverInfo roverInfo = roverInfoRepo.findByRoverId(roverId);
         roverInfo.setY(yCord);
         roverInfo.setX(xCord);
         roverInfo.setStatus(status);
         roverInfoRepo.save(roverInfo);
+    }
+
+    public void move(Double x, Double y){
+        status = RoverSchedulerStatus.IN_PROGRESS;
+        moveFun(x, y);
+        status = RoverSchedulerStatus.FREE;
     }
 }

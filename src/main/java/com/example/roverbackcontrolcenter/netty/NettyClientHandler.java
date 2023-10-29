@@ -85,7 +85,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            boolean landed = MathUtil.checkEvent(90);
+            boolean landed = MathUtil.checkEvent(100);
             RoverLandStatus roverLandStatus = new RoverLandStatus();
             roverLandStatus.setRoverId(roverId);
             roverLandStatus.setTimestamp(LocalDateTime.now());

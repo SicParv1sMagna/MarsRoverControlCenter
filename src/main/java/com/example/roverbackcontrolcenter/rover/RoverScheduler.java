@@ -38,6 +38,14 @@ public class RoverScheduler {
                         roverCommandRepo.save(command);
                         log.warn("Rover достиг место назначения");
                     }
+                    case COLLECT_INFO -> {
+                        command.setStartTime(LocalDateTime.now());
+                        rover.collectInfo(command.getX(), command.getY());
+                        command.setDoneTime(LocalDateTime.now());
+                        command.setCommandStatus(CommandStatus.DONE);
+                        roverCommandRepo.save(command);
+                        log.warn("Исследовал место");
+                    }
                 }
             }
         }

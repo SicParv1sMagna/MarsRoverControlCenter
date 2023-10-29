@@ -8,5 +8,6 @@ import lombok.*;
  * @author Vladimir Krasnov
  */
 public enum RoverCommandEnum {
-    MOVE
+    MOVE,
+    COLLECT_INFO
 }
