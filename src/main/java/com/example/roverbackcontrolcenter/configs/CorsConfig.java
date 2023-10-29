@@ -14,7 +14,8 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**") // Указывайте здесь путь, который соответствует вашему API
-                .allowedOrigins("http://localhost:8082")
+                .allowedOrigins("http://localhost:8082/")
+                .allowedOriginPatterns("*")
                 .allowCredentials(true);
     }
 }

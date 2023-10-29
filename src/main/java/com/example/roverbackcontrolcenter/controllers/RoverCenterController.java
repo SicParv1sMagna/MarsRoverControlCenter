@@ -85,6 +85,7 @@ public class RoverCenterController {
                 .body(res);
     }
 
+
     private final SimpMessagingTemplate simp;
 
     @GetMapping("/test")
