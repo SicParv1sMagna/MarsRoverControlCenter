@@ -3,8 +3,10 @@ package com.example.roverbackcontrolcenter.controllers;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperationRequestDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverCreateResponseDto;
+import com.example.roverbackcontrolcenter.models.DTOs.response.RoverGetAllResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperationResponseDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
+import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import com.example.roverbackcontrolcenter.services.RoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.net.URI;
+import java.util.List;
 
 /**
  * Description: Rover center Controller
@@ -28,6 +31,7 @@ import java.net.URI;
 @RequestMapping("/rover")
 public class RoverCenterController {
     private final RoverService roverService;
+    private final RoverRepo roverRepo;
 
     /**
      * @param request {@link RoverCreateRequestDto}
@@ -53,5 +57,14 @@ public class RoverCenterController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(RoverStartOperationResponseDto.mapFromEntity(rover));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<RoverGetAllResponseDto>> getAll() {
+        List<Rover> roverList = roverRepo.findAll();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(roverList.stream().map(RoverGetAllResponseDto::mapFromEntity).toList());
     }
 }

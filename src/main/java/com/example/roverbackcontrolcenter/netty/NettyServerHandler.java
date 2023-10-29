@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,18 +21,14 @@ import org.springframework.stereotype.Component;
 @ChannelHandler.Sharable
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     private final ActiveChannelManager activeChannelManager;
+    private final SimpMessagingTemplate simp;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        /*Channel channel = ctx.channel();
-        RoverInfo roverInfo = (RoverInfo) channel.attr(AttributeKey.valueOf("RoverInfo")).get();
-        Long roverId = roverInfo.getRoverId();
-        activeChannelManager.removeChannel(roverId);*/
     }
 
     @Override
