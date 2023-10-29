@@ -6,6 +6,7 @@ import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.netty.models.RoverInfoConnect;
 import com.example.roverbackcontrolcenter.netty.models.RoverLandStatus;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -38,28 +39,10 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof RoverInfoConnect roverInfo) {
-            activeChannelManager.addChannel(roverInfo.getRoverId(), ctx.channel());
-            log.warn("Подключен новый Rover с id: " + roverInfo.getRoverId());
-        } else if (msg instanceof RoverLandStatus roverLandStatus) {
-            Rover rover = roverRepo.findById(roverLandStatus.getRoverId()).get();
-            switch (roverLandStatus.getStatus()) {
-                case IN_OPERATION -> {
-                    rover.setRoverStatus(RoverStatus.IN_OPERATION);
-                    rover.setStartOperationDate(roverLandStatus.getTimestamp());
-                    log.warn("Rover с id " + roverLandStatus.getRoverId() + " сел на Марс");
-                }
-                case DECOMMISSIONED -> {
-                    rover.setRoverStatus(RoverStatus.DECOMMISSIONED);
-                    rover.setStartOperationDate(roverLandStatus.getTimestamp());
-                    rover.setEndOperationDate(roverLandStatus.getTimestamp());
-                    log.warn("Rover с id " + roverLandStatus.getRoverId() + " улетел в пустоту");
-                    activeChannelManager.removeChannel(roverLandStatus.getRoverId());
-                }
-            }
-            roverRepo.save(rover);
-            RoverSendStatusSocketDto res = RoverSendStatusSocketDto.mapFromRoverLandStatus(roverLandStatus);
-            simp.convertAndSend("/rover/statusInfo", res);
+        if (msg instanceof RoverInfoConnect) {
+            handleRoverInfoConnect((RoverInfoConnect) msg, ctx.channel());
+        } else if (msg instanceof RoverLandStatus) {
+            handleRoverLandStatus((RoverLandStatus) msg);
         }
     }
 
@@ -67,5 +50,35 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.channel().close();
+    }
+
+    private void handleRoverInfoConnect(RoverInfoConnect roverInfo, Channel channel) {
+        activeChannelManager.addChannel(roverInfo.getRoverId(), channel);
+        log.warn("Подключен новый Rover с id: " + roverInfo.getRoverId());
+    }
+
+    private void handleRoverLandStatus(RoverLandStatus roverLandStatus) {
+        Rover rover = roverRepo.findById(roverLandStatus.getRoverId()).get();
+        switch (roverLandStatus.getStatus()) {
+            case IN_OPERATION -> handleRoverInOperation(rover, roverLandStatus);
+            case DECOMMISSIONED -> handleRoverDecommissioned(rover, roverLandStatus);
+        }
+        roverRepo.save(rover);
+        RoverSendStatusSocketDto res = RoverSendStatusSocketDto.mapFromRoverLandStatus(roverLandStatus);
+        simp.convertAndSend("/rover/statusInfo", res);
+    }
+
+    private void handleRoverInOperation(Rover rover, RoverLandStatus roverLandStatus) {
+        rover.setRoverStatus(RoverStatus.IN_OPERATION);
+        rover.setStartOperationDate(roverLandStatus.getTimestamp());
+        log.warn("Rover с id " + roverLandStatus.getRoverId() + " сел на Марс");
+    }
+
+    private void handleRoverDecommissioned(Rover rover, RoverLandStatus roverLandStatus) {
+        rover.setRoverStatus(RoverStatus.DECOMMISSIONED);
+        rover.setStartOperationDate(roverLandStatus.getTimestamp());
+        rover.setEndOperationDate(roverLandStatus.getTimestamp());
+        log.warn("Rover с id " + roverLandStatus.getRoverId() + " улетел в пустоту");
+        activeChannelManager.removeChannel(roverLandStatus.getRoverId());
     }
 }
