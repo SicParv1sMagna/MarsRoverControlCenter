@@ -23,10 +23,10 @@ public class ActiveChannelManager {
         activeChannels.remove(roverId);
     }
 
-    public void sendMessageToChannel(Long roverId, String message) {
+    public void sendMessageToChannel(Long roverId, Object msg) {
         Channel channel = activeChannels.get(roverId);
         if (channel != null) {
-            channel.writeAndFlush(message);
+            channel.writeAndFlush(msg);
         }
     }
 }

@@ -7,6 +7,8 @@ import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequest
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperationRequestDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
 import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
+import com.example.roverbackcontrolcenter.netty.ActiveChannelManager;
+import com.example.roverbackcontrolcenter.netty.models.RoverStartSending;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
 import com.example.roverbackcontrolcenter.services.RoverService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 public class RoverServiceImpl implements RoverService {
 
     private final RoverRepo roverRepo;
+    private final ActiveChannelManager activeChannelManager;
 
     @Override
     public Rover createRover(RoverCreateRequestDto request) {
@@ -34,7 +37,6 @@ public class RoverServiceImpl implements RoverService {
         } catch (DataIntegrityViolationException ex) {
             throw new RoverNameExistsException(request.getName());
         }
-
     }
 
     @Override
@@ -51,6 +53,10 @@ public class RoverServiceImpl implements RoverService {
         rover.setRoverStatus(RoverStatus.SENT);
         Double x = request.getX();
         Double y = request.getY();
+        RoverStartSending msg = new RoverStartSending();
+        msg.setX(x);
+        msg.setY(y);
+        activeChannelManager.sendMessageToChannel(id, msg);
 
         return roverRepo.save(rover);
     }

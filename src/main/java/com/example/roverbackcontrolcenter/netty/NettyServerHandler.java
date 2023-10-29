@@ -37,7 +37,7 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
             activeChannelManager.addChannel(roverInfo.getRoverId(), ctx.channel());
             log.warn("Подключен новый Rover с id: " + roverInfo.getRoverId());
         } else if (msg instanceof RoverSentInfo roverSentInfo) {
-
+            simp.convertAndSend("/rover/statusInfo", "");
         }
     }
 

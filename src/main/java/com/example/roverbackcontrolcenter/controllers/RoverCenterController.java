@@ -11,6 +11,7 @@ import com.example.roverbackcontrolcenter.services.RoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,5 +67,12 @@ public class RoverCenterController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(roverList.stream().map(RoverGetAllResponseDto::mapFromEntity).toList());
+    }
+
+    private final SimpMessagingTemplate simp;
+
+    @GetMapping("/test")
+    public void fun() {
+        simp.convertAndSend("/rover/test", new Msg("hi"));
     }
 }
