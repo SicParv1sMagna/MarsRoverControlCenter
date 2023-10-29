@@ -8,6 +8,7 @@ import com.example.roverbackcontrolcenter.models.DTOs.response.RoverGetAllRespon
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperationResponseDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
 import com.example.roverbackcontrolcenter.models.entity.RoverCommand;
+import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
 import com.example.roverbackcontrolcenter.repos.MovementRepo;
 import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
@@ -96,6 +97,16 @@ public class RoverCenterController {
 
 
     private final SimpMessagingTemplate simp;
+
+    @GetMapping("/{id}/reset")
+    public ResponseEntity<?> fun1(@PathVariable(name = "id") Long id) {
+        Rover rover = roverRepo.findById(id).get();
+        rover.setRoverStatus(RoverStatus.FREE);
+        roverRepo.save(rover);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
 
     @GetMapping("/test")
     public void fun() {
