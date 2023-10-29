@@ -6,8 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * Description:
@@ -18,12 +20,13 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Validated
 public class RoverCreateRequestDto {
     @NotBlank(message = "Field name cant be blank")
     private String name;
-    @NotBlank(message = "Field speed cant be blank")
+    @NotNull(message = "Field speed cant be null")
     private Double speed;
-    @NotBlank(message = "Field maneuverability cant be blank")
+    @NotNull(message = "Field maneuverability cant be null")
     private Double maneuverability;
 
     public Rover mapToEntity() {
