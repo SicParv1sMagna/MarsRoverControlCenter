@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * Description:
@@ -17,9 +17,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoverStartOperationRequestDto {
-    @NotBlank
+    @NotNull
     private Double x;
-    @NotBlank
+    @NotNull
     private Double y;
 
 }
