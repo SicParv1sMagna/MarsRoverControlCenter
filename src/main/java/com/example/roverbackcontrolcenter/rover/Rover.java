@@ -57,6 +57,7 @@ public class Rover {
         roverCommand.setPlanTime(roverAddCommand.getPlanTime());
 
         roverCommandRepo.save(roverCommand);
+        log.warn("Команда добавлена id " + roverCommand.getId());
     }
 
     public void move(Double x, Double y){
