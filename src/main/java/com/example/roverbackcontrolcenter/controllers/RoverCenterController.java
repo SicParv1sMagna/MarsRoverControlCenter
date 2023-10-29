@@ -6,10 +6,12 @@ import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperatio
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverCreateResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverGetAllResponseDto;
 import com.example.roverbackcontrolcenter.models.DTOs.response.RoverStartOperationResponseDto;
+import com.example.roverbackcontrolcenter.models.entity.MovementHistory;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
 import com.example.roverbackcontrolcenter.models.entity.RoverCommand;
 import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
+import com.example.roverbackcontrolcenter.repos.CordRepo;
 import com.example.roverbackcontrolcenter.repos.MovementRepo;
 import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
@@ -77,6 +79,8 @@ public class RoverCenterController {
                 .body(roverList.stream().map(RoverGetAllResponseDto::mapFromEntity).toList());
     }
 
+    private final CordRepo cordRepo;
+
     @PostMapping("/{id}/commands")
     public ResponseEntity<?> addCommand(@PathVariable(name = "id") Long id,
                                         @RequestBody RoverCommandRequestDto req) {
@@ -95,8 +99,20 @@ public class RoverCenterController {
                 .body(movementRepo.findAllByRoverId(id));
     }
 
+    @GetMapping("/{id}")
+    public MovementHistory getCord1(@PathVariable(name = "id") Long id) {
+        return movementRepo.findTopByRoverIdOrderByTimestampDesc(id);
+    }
+
 
     private final SimpMessagingTemplate simp;
+
+    @GetMapping("/cord")
+    public ResponseEntity<?> getCordById() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(cordRepo.findAll());
+    }
 
     @GetMapping("/{id}/reset")
     public ResponseEntity<?> fun1(@PathVariable(name = "id") Long id) {

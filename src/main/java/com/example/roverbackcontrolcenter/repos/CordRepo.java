@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Vladimir Krasnov
  */
 public interface CordRepo extends JpaRepository<Coordinate, Long> {
+
 }
