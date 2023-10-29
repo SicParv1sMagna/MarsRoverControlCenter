@@ -12,6 +12,7 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Vladimir Krasnov
  */
 @Configuration
+@Slf4j
 @RequiredArgsConstructor
 public class NettyServerConfig {
     private final NettyServerHandler nettyServerHandler;
@@ -41,7 +43,13 @@ public class NettyServerConfig {
                         ch.pipeline().addLast(nettyServerHandler);
                     }
                 });
-        serverBootstrap.bind("localhost", 8888).sync().channel().closeFuture().syncUninterruptibly();
+        serverBootstrap.bind("localhost", 8888).addListener(future -> {
+            if (future.isSuccess()) {
+                log.warn("Подключение netty открыто");
+            } else {
+                log.warn("Ошибка netty");
+            }
+        });
         return serverBootstrap;
     }
 
