@@ -4,7 +4,6 @@ import com.example.roverbackcontrolcenter.exceptions.RoverAlreadyOnOperationExce
 import com.example.roverbackcontrolcenter.exceptions.RoverByIdNotFoundException;
 import com.example.roverbackcontrolcenter.exceptions.RoverNameExistsException;
 import com.example.roverbackcontrolcenter.models.DTOs.request.RoverCreateRequestDto;
-import com.example.roverbackcontrolcenter.models.DTOs.request.RoverStartOperationRequestDto;
 import com.example.roverbackcontrolcenter.models.entity.Rover;
 import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.repos.RoverRepo;
@@ -38,7 +37,7 @@ public class RoverServiceImpl implements RoverService {
     }
 
     @Override
-    public Rover startRoverOperation(Long id, RoverStartOperationRequestDto request) {
+    public Rover startRoverOperation(Long id) {
         Rover rover = roverRepo.findById(id)
                 .orElseThrow(() -> new RoverByIdNotFoundException(id));
         RoverStatus roverStatus = rover.getRoverStatus();
@@ -49,8 +48,6 @@ public class RoverServiceImpl implements RoverService {
         }
         rover.setSendToOperationDate(LocalDateTime.now());
         rover.setRoverStatus(RoverStatus.SENT);
-        Double x = request.getX();
-        Double y = request.getY();
 
         return roverRepo.save(rover);
     }
