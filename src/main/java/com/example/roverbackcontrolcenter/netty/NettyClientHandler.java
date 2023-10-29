@@ -2,8 +2,10 @@ package com.example.roverbackcontrolcenter.netty;
 
 import com.example.roverbackcontrolcenter.models.enums.ConnectStatus;
 import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
+import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
 import com.example.roverbackcontrolcenter.netty.models.RoverLandStatus;
 import com.example.roverbackcontrolcenter.netty.models.RoverStartSending;
+import com.example.roverbackcontrolcenter.rover.Rover;
 import com.example.roverbackcontrolcenter.utils.MathUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -29,6 +31,8 @@ import java.time.LocalDateTime;
 @Slf4j
 @ChannelHandler.Sharable
 public class NettyClientHandler extends ChannelInboundHandlerAdapter {
+    @Autowired
+    private Rover rover;
 
     private final NettyClientService nettyClientService;
     @Autowired
@@ -47,6 +51,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof RoverStartSending roverStartSending) {
             handleRoverStartSending(roverStartSending);
+        }else if(msg instanceof RoverAddCommand roverAddCommand){
+            rover.addCommand(roverAddCommand);
         }
     }
     @Override
@@ -82,6 +88,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
                 roverLandStatus.setY(MathUtil.adjustCord(startSending.getY(), 10));
                 roverLandStatus.setX(MathUtil.adjustCord(startSending.getX(), 10));
                 log.warn("Rover с id " + roverId + " сел на Марс");
+                rover.setXCord(rover.getXCord());
+                rover.setYCord(rover.getYCord());
 
             } else {
                 roverLandStatus.setStatus(RoverStatus.DECOMMISSIONED);
