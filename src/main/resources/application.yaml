@@ -1,6 +1,8 @@
 rover:
   id: 1
   timeToMars: 3000
+  speed: 2
+  maneuverability: 0.9
 server:
   port: 8083
   servlet:

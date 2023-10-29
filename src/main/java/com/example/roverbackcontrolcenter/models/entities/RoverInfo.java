@@ -1,10 +1,9 @@
 package com.example.roverbackcontrolcenter.models.entities;
 
-import com.example.roverbackcontrolcenter.models.enums.MovementStatus;
+import com.example.roverbackcontrolcenter.models.enums.RoverSchedulerStatus;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 /**
  * Description:
@@ -13,19 +12,17 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class MovementHistory {
+public class RoverInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     private Long roverId;
-    @Basic
-    private LocalDateTime timestamp;
     private Double x;
     private Double y;
     @Enumerated(EnumType.STRING)
-    private MovementStatus movementStatus;
+    private RoverSchedulerStatus status;
 }

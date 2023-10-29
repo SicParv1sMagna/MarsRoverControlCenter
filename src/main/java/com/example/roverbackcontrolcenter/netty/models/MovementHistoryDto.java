@@ -1,4 +1,4 @@
-package com.example.roverbackcontrolcenter.models.DTOs.response;
+package com.example.roverbackcontrolcenter.netty.models;
 
 import com.example.roverbackcontrolcenter.models.entities.MovementHistory;
 import com.example.roverbackcontrolcenter.models.enums.MovementStatus;

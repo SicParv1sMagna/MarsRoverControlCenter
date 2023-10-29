@@ -1,25 +1,26 @@
 package com.example.roverbackcontrolcenter.rover;
 
-import com.example.roverbackcontrolcenter.models.DTOs.response.MovementHistoryDto;
+import com.example.roverbackcontrolcenter.models.entities.RoverInfo;
+import com.example.roverbackcontrolcenter.netty.models.MovementHistoryDto;
 import com.example.roverbackcontrolcenter.models.entities.Coordinate;
 import com.example.roverbackcontrolcenter.models.entities.MovementHistory;
 import com.example.roverbackcontrolcenter.models.entities.RoverCommand;
 import com.example.roverbackcontrolcenter.models.enums.CommandStatus;
 import com.example.roverbackcontrolcenter.models.enums.MovementStatus;
 import com.example.roverbackcontrolcenter.models.enums.RoverSchedulerStatus;
-import com.example.roverbackcontrolcenter.models.enums.RoverStatus;
 import com.example.roverbackcontrolcenter.netty.ActiveChannelContainer;
 import com.example.roverbackcontrolcenter.netty.models.RoverAddCommand;
 import com.example.roverbackcontrolcenter.repos.CordRepo;
 import com.example.roverbackcontrolcenter.repos.MovementRepo;
 import com.example.roverbackcontrolcenter.repos.RoverCommandRepo;
+import com.example.roverbackcontrolcenter.repos.RoverInfoRepo;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Description:
@@ -35,15 +36,28 @@ public class Rover {
     private final CordRepo cordRepo;
     private final RoverCommandRepo roverCommandRepo;
     private final MovementRepo movementRepo;
+    private final RoverInfoRepo roverInfoRepo;
     @Value("${rover.id}")
     private Long roverId;
     @Value("${rover.timeToMars}")
     private Integer timeToMars;
     private Double xCord;
     private Double yCord;
+    @Value("${rover.speed}")
     private Double speed;
+    @Value("${rover.maneuverability}")
     private Double maneuverability;
     private RoverSchedulerStatus status = RoverSchedulerStatus.FREE;
+
+    @PostConstruct
+    public void init(){
+        RoverInfo roverInfo = roverInfoRepo.findByRoverId(roverId);
+        if(roverInfo != null){
+            xCord = roverInfo.getX();
+            yCord = roverInfo.getY();
+            status = roverInfo.getStatus();
+        }
+    }
 
     public void addCommand(RoverAddCommand roverAddCommand){
         roverAddCommand.setCommandStatus(CommandStatus.IN_PLAN);
@@ -105,6 +119,11 @@ public class Rover {
             movementHistory.setTimestamp(LocalDateTime.now());
             movementHistory.setRoverId(roverId);
             movementRepo.save(movementHistory);
+            RoverInfo roverInfo = roverInfoRepo.findByRoverId(roverId);
+            roverInfo.setY(yCord);
+            roverInfo.setX(xCord);
+            roverInfo.setStatus(status);
+            roverInfoRepo.save(roverInfo);
             activeChannelContainer.getActiveChannel().writeAndFlush(MovementHistoryDto.mapFromEntity(movementHistory));
             try {
                 Thread.sleep(1000);
@@ -113,5 +132,10 @@ public class Rover {
             }
         }
         status = RoverSchedulerStatus.FREE;
+        RoverInfo roverInfo = roverInfoRepo.findById(roverId).get();
+        roverInfo.setY(yCord);
+        roverInfo.setX(xCord);
+        roverInfo.setStatus(status);
+        roverInfoRepo.save(roverInfo);
     }
 }
